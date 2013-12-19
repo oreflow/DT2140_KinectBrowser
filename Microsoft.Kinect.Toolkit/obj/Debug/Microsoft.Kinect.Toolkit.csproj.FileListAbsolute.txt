@@ -1,0 +1,12 @@
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.pdb
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.CodeAnalysisLog.xml
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.lastcodeanalysissucceeded
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.baml
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.g.cs
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit_MarkupCompile.cache
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.g.resources
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.Properties.Resources.resources
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csproj.GenerateResource.Cache
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.dll
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\Multimodal_project\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.pdb
