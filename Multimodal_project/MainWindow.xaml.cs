@@ -90,8 +90,6 @@ namespace Multimodal_project
             {
                 sensor.Stop();
             }
-            if(sensor.AudioSource != null)
-                sensor.AudioSource.Stop();
         }
 
         void _sensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
