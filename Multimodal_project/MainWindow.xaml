@@ -15,11 +15,9 @@
             <ColumnDefinition Width="53*"/>
             <ColumnDefinition Width="464*"/>
         </Grid.ColumnDefinitions>
-        <Popup PlacementTarget="{Binding ElementName=browser}" Placement="Absolute" VerticalOffset="50" HorizontalOffset="50" IsOpen="true" Name="LeftEllipse"  AllowsTransparency="True">
-            <Ellipse Canvas.Left="100" Canvas.Top="50" Fill="Blue" Height="50" Width="50" Opacity="1" Stroke="White" x:Name="LeftEllipseInner" StrokeThickness="10px" />
+        <Popup PlacementTarget="{Binding ElementName=browser}" Placement="Absolute" VerticalOffset="50" HorizontalOffset="50" IsOpen="true" Name="LeftPopup"  AllowsTransparency="True">
         </Popup>
-        <Popup PlacementTarget="{Binding ElementName=browser}" Placement="Absolute" VerticalOffset="50" HorizontalOffset="150" IsOpen="true" Name="RightEllipse" AllowsTransparency="True">
-            <Ellipse Canvas.Left="10" Canvas.Top="50" Fill="Green" Height="50" Width="50" Opacity="1" Stroke="White" StrokeThickness="10px" x:Name="RightEllipseInner"/>
+        <Popup PlacementTarget="{Binding ElementName=browser}" Placement="Absolute" VerticalOffset="50" HorizontalOffset="150" IsOpen="true" Name="RightPopup" AllowsTransparency="True">
         </Popup>
         <WebBrowser Width="Auto" Height="Auto" Grid.ColumnSpan="2" x:Name="browser"/>
     </Grid>
