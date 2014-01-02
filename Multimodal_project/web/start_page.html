@@ -1,0 +1,155 @@
+﻿<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+
+        #arrow_right {
+            background-image:url('right_arrow.png');
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            visibility: hidden;
+            width:600px;
+            height:300px;
+        }
+        #right_body {
+            background-color:transparent;
+            font-size: 36px;
+            position:absolute;
+            top:50px;
+            left:20px;
+            width:360px;
+            height:200px;
+            text-align:center;
+            align-content:center;
+            vertical-align:central;
+        }
+
+        #arrow_down {
+            background-image:url('down_arrow.png');
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            visibility: hidden;
+            width:500px;
+            height:500px;
+        }
+        #down_body {
+            background-color:transparent;
+            font-size: 36px;
+            position:absolute;
+            top:20px;
+            left:90px;
+            width:330px;
+            height:330px;
+            text-align:center;
+            align-content:center;
+            vertical-align:central;
+        }
+        #zoom {
+            background-color:green;
+            position:absolute;
+            visibility:hidden;
+            font-size: 36px;
+            text-align:center;
+            align-content:center;
+            vertical-align:central;
+            height:500px;
+            width:500px;
+            z-index:1;
+        }
+        #link {
+            visibility:hidden;
+            background-color:red;
+            position:absolute;
+            top:200px;
+            left:200px;
+            font-size:20px;
+            width:100px;
+            height:100px;
+            z-index:2;
+        }
+        #extender {
+            position:absolute;
+            width:1px;
+            height:1px;
+        }
+
+    </style>
+    <script type="text/javascript">
+
+        var winW, winH;
+        window.onload = function () {
+            if (document.body && document.body.offsetWidth) {
+                winW = document.body.offsetWidth;
+                winH = document.body.offsetHeight;
+            }
+            if (document.compatMode == 'CSS1Compat' &&
+                document.documentElement &&
+                document.documentElement.offsetWidth) {
+                winW = document.documentElement.offsetWidth;
+                winH = document.documentElement.offsetHeight;
+            }
+            if (window.innerWidth && window.innerHeight) {
+                winW = window.innerWidth;
+                winH = window.innerHeight;
+            }
+
+            document.getElementById("arrow_right").style.visibility = "visible";
+            document.getElementById("arrow_right").style.top = winH / 2 - 150;
+            document.getElementById("arrow_right").style.left = winW / 2 - 300;
+
+
+            document.getElementById("arrow_down").style.visibility = "visible";
+            document.getElementById("arrow_down").style.top = winH / 2 - 150;
+            document.getElementById("arrow_down").style.left = winW / 2 - 300 + winW;
+
+
+            document.getElementById("extender").style.left = 2 * winW;
+
+
+        };
+
+        window.onscroll = function () {
+            if (document.body.scrollLeft == null || winW == 0 || winH == 0)
+                return;
+            if (document.body.scrollLeft > winW - 10) {
+                document.getElementById("extender").style.top = 2 * winH;
+                document.getElementById("zoom").style.visibility = "visible";
+                document.getElementById("zoom").style.top = winH / 2 - 250 + winH;
+                document.getElementById("zoom").style.left = winW / 2 - 250 + winW;
+
+            }
+            if (document.body.style.zoom > 1.0) {
+                // add some new kind of event to detect zooming, probably easiest to do when zooming for the browser has been implemented
+                document.getElementById("link").style.visibility = "visible";
+                document.getElementById("link").style.top = winH / 2 - 250 + winH;
+                document.getElementById("link").style.left = winW / 2 - 250 + winW;
+            }
+
+        };
+    </script>
+</head>
+<body id="body">
+    <div id="arrow_right">
+        <div id="right_body">
+            Place your hands vertically to each other in the detection zone and scroll to the right
+        </div>
+    </div>
+    <div id="arrow_down">
+        <div id="down_body">
+            Place your hands horizontally to each other in the detection zone and scroll down
+        </div>
+    </div>
+    <div id="zoom">
+        zoom in by moving your hands away from each other in the detection zone
+        <a href="http://www.imgur.com/"><div id="link">click here to start your browsing</div></a>
+    </div>
+    <div id="extender"> </div>
+
+</body>
+</html>
