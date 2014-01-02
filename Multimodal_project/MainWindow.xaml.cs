@@ -43,7 +43,8 @@ namespace Multimodal_project
         public MainWindow()
         {
             InitializeComponent();
-            browser.Navigate("http://www.google.se/");
+//            browser.Navigate("http://www.google.se/");
+            browser.Navigate(System.AppDomain.CurrentDomain.BaseDirectory + "web/start_page.html");
 
             max_iterations = new Dictionary<GestureState, int>();
             max_iterations[GestureState.ZOOM] = 8;
@@ -268,31 +269,6 @@ namespace Multimodal_project
 
                 double Width = MainWpfWindow.Width;
                 double Height = MainWpfWindow.Height;
-                Microsoft.Kinect.CoordinateMapper mapper = new CoordinateMapper(_sensor);
-
-                DepthImagePoint headDepthPoint = mapper.MapSkeletonPointToDepthPoint(skeleton.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
-                DepthImagePoint leftHandDepthPoint = mapper.MapSkeletonPointToDepthPoint(skeleton.Joints[JointType.HandLeft].Position, DepthImageFormat.Resolution640x480Fps30);
-                DepthImagePoint rightHandDepthPoint = mapper.MapSkeletonPointToDepthPoint(skeleton.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30);
-
-                /*
-                 * Code that transforms skeleton to color image coordinates,
-                 * Used if skeleton data should be displayed on the camera color image, removing the minor error that is between color and depth data.
-                 */
-                /*
-                ColorImagePoint headColorPoint = depth.MapToColorImagePoint(headDepthPoint.X, headDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                ColorImagePoint leftHandColorPoint = depth.MapToColorImagePoint(leftHandDepthPoint.X, leftHandDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                ColorImagePoint rightHandColorPoint = depth.MapToColorImagePoint(rightHandDepthPoint.X, rightHandDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-
-                Console.Write("right hand color image pos: (" + rightHandColorPoint.X + ", " + rightHandColorPoint.Y + ")");
-                Console.Write("right hand color image pos: (" + leftHandColorPoint.X + ", " + leftHandColorPoint.Y + ")");
-
-                RightEllipse.HorizontalOffset = ((rightHandColorPoint.X-320) / 640.0) * Width + Width / 2;
-                RightEllipse.VerticalOffset = ((rightHandColorPoint.Y-240) / 480.0) * Height + Height / 2;
-
-                LeftEllipse.HorizontalOffset = ((leftHandColorPoint.X-320) / 640.0) * Width + Width / 2;
-                LeftEllipse.VerticalOffset = ((leftHandColorPoint.Y-240) / 480.0) * Height + Height / 2;
-
-                */
 
                 //                Using the Coding4Fun assembly to calculate hand positions
                 Joint left_hand = skeleton.Joints[JointType.HandLeft];
@@ -307,12 +283,11 @@ namespace Multimodal_project
                 LeftPopup.HorizontalOffset = left_hand_scaled.Position.X;
                 LeftPopup.VerticalOffset = left_hand_scaled.Position.Y;
 
-
                 /*
-                 * If the hand positions are (250) mm closer than the head position
+                 * If the hand positions are 0.25 m closer than the head position
                  */
-                int threshold = 250;
-                if (headDepthPoint.Depth > leftHandDepthPoint.Depth + threshold)
+                double threshold = 0.25;
+                if (skeleton.Joints[JointType.Head].Position.Z > skeleton.Joints[JointType.HandLeft].Position.Z + threshold)
                 {
                     if(!leftActive)
                         setLeftColor(System.Windows.Media.Brushes.HotPink);
@@ -324,7 +299,7 @@ namespace Multimodal_project
                         setLeftColor(System.Windows.Media.Brushes.White);
                     leftActive = false;
                 }
-                if (headDepthPoint.Depth > rightHandDepthPoint.Depth + threshold)
+                if (skeleton.Joints[JointType.Head].Position.Z > skeleton.Joints[JointType.HandRight].Position.Z + threshold)
                 {
                     if(!rightActive)
                         setRightColor(System.Windows.Media.Brushes.HotPink);
@@ -336,6 +311,7 @@ namespace Multimodal_project
                         setRightColor(System.Windows.Media.Brushes.White);
                     rightActive = false;
                 }
+
                 // Code for gestures / interaction
 
                 gestureStep(left_hand_scaled, right_hand_scaled, skeleton);

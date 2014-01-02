@@ -19,3 +19,4 @@ C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\Multimo
 C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\Multimodal_project\obj\Debug\KinectBrowser.csproj.GenerateResource.Cache
 C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\Multimodal_project\obj\Debug\Multimodal_project.exe
 C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\Multimodal_project\obj\Debug\Multimodal_project.pdb
+C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\Multimodal_project\bin\Debug\web\start_page.html

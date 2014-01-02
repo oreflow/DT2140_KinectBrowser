@@ -130,6 +130,15 @@
   <ItemGroup>
     <Content Include="FaceTrackData.dll" />
     <Content Include="FaceTrackLib.dll" />
+    <Resource Include="web\right_arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="web\down_arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="web\start_page.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

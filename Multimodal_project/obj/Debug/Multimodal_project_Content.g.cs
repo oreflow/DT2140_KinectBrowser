@@ -10,5 +10,6 @@
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("facetrackdata.dll")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("facetracklib.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("web/start_page.html")]
 
 
