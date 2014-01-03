@@ -15,7 +15,9 @@ using System.Windows.Shapes;
 using System.Windows.Interop;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
+using mshtml;
 using Coding4Fun.Kinect.Wpf;
+using System.Runtime.InteropServices;
 
 namespace Multimodal_project
 {
@@ -39,12 +41,15 @@ namespace Multimodal_project
         /// </summary>
 
 
+        SkeletonPoint click_start_pos;
+        bool can_click = true;
         Dictionary<GestureState, int> max_iterations;
         public MainWindow()
         {
+            SetCursorPos(0, 0);
             InitializeComponent();
-//            browser.Navigate("http://www.google.se/");
-            browser.Navigate(System.AppDomain.CurrentDomain.BaseDirectory + "web/start_page.html");
+            browser.Navigate("http://www.w3schools.com/");
+//            browser.Navigate(System.AppDomain.CurrentDomain.BaseDirectory + "web/start_page.html");
 
             max_iterations = new Dictionary<GestureState, int>();
             max_iterations[GestureState.ZOOM] = 8;
@@ -64,6 +69,7 @@ namespace Multimodal_project
             */
         }
 
+        double zoom_current = 1.0;
         enum PointerShape {RECTANGLE, ELLIPSE, STAR};
         private void InitializeHandFigures()
         {
@@ -277,8 +283,11 @@ namespace Multimodal_project
                 Joint left_hand_scaled = left_hand.ScaleTo((int)Width, (int)Height * 2, 0.5f, 0.5f);
                 Joint right_hand_scaled = right_hand.ScaleTo((int)Width, (int)Height * 2, 0.5f, 0.5f);
 
-                RightPopup.HorizontalOffset = right_hand_scaled.Position.X;
-                RightPopup.VerticalOffset = right_hand_scaled.Position.Y;
+                if (current_state != GestureState.CLICK)
+                {
+                    RightPopup.HorizontalOffset = right_hand_scaled.Position.X;
+                    RightPopup.VerticalOffset = right_hand_scaled.Position.Y;
+                }
 
                 LeftPopup.HorizontalOffset = left_hand_scaled.Position.X;
                 LeftPopup.VerticalOffset = left_hand_scaled.Position.Y;
@@ -353,7 +362,31 @@ namespace Multimodal_project
             else if (rightActive && !leftActive)
             {
                 prev_left.Clear();
-                SetState(GestureState.UNKNOWN);
+                if (!can_click)
+                    return;
+
+                if(current_state == GestureState.CLICK)
+                {
+                    if ((right_hand_scaled.Position.Z ) < click_start_pos.Z - 0.1)
+                    {
+                        int X = int.Parse(Math.Floor(click_start_pos.X).ToString()) + 25;
+                        int Y = int.Parse(Math.Floor(click_start_pos.Y).ToString()) + 25;
+                        SetCursorPos(X, Y);
+                        mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)X, (uint)Y, 0, 0);
+                        SetCursorPos(0, 0);
+                        SetState(GestureState.UNKNOWN);
+                        prev_right.Clear();
+                        BlockClicks();
+                        setRightColor(System.Windows.Media.Brushes.HotPink);
+                        Console.WriteLine("Triggered click.");
+                    }
+                    else if((right_hand_scaled.Position.Z ) > click_start_pos.Z + 0.1)
+                    {
+                        SetState(GestureState.UNKNOWN);
+                        Console.WriteLine("Cancelled click");
+                    }
+                    return;
+                }
 
                 Joint? tmp = null;
                 int iter = 0;
@@ -373,13 +406,13 @@ namespace Multimodal_project
                     }
                     tmp = j;
                 }
-                Console.WriteLine("dx: " + dx + " dy: " + dy + " dz: " + dz);
-                if(dz > 0.1 &&
+                if(dz > 0.05 &&
                     Math.Abs(dx) < 100 &&
                     Math.Abs(dy) < 100)
                 {
                     setRightColor(System.Windows.Media.Brushes.Red);
                     SetState(GestureState.CLICK);
+                    click_start_pos = right_hand_scaled.Position;
                 }
             }
             else if (rightActive && leftActive)
@@ -456,7 +489,7 @@ namespace Multimodal_project
                         double current_dist = Math.Sqrt(Math.Pow(left_hand_scaled.Position.X - right_hand_scaled.Position.X, 2) + Math.Pow(left_hand_scaled.Position.Y - right_hand_scaled.Position.Y, 2));
                         double prev_dist = Math.Sqrt(Math.Pow(prev_left.ElementAt(1).Position.X - prev_right.ElementAt(1).Position.X, 2) + Math.Pow(prev_left.ElementAt(1).Position.Y - prev_right.ElementAt(1).Position.Y, 2));
                         double zoom = current_dist - prev_dist;
-                        Console.WriteLine(zoom);
+                        SetZoomRel(zoom / 2000);
                         // call zoom function
                     }
                 }
@@ -470,11 +503,11 @@ namespace Multimodal_project
                         double prev_y = (prev_left.ElementAt(1).Position.Y + prev_right.ElementAt(1).Position.Y) / 2;
                         double dx = current_x - prev_x;
                         double dy = current_y - prev_y;
-                        Console.WriteLine("Scrolling dx: " + dx + ", dy: " + dy);
+                        const double H_SCROLL = 1.7;
+                        const double V_SCROLL = 1.5;
+                        SetScrollRel(-dx * H_SCROLL, -dy * V_SCROLL);
                     }
                 }
-                Console.WriteLine("ldx: " + left_dx + ", ldy: " + left_dy + ", rdx: " + right_dx + ", rdy: " + right_dy);
-                Console.WriteLine(current_state);
             }
         }
 
@@ -504,6 +537,43 @@ namespace Multimodal_project
 
 
 
+        }
+
+        const double MAX_ZOOM = 5.0;
+        const double MIN_ZOOM = 0.1;
+        void SetZoomRel(double zoom_change)
+        {
+
+            zoom_current += zoom_change;
+            zoom_current = Math.Max(MIN_ZOOM, Math.Min(zoom_current, MAX_ZOOM));
+            mshtml.IHTMLDocument2 doc = browser.Document as mshtml.IHTMLDocument2;
+            doc.parentWindow.execScript("if(document.body != null) document.body.style.zoom = " + zoom_current.ToString().Replace(",", ".") + ";");
+        }
+
+        void SetScrollRel(double horizontal_scroll, double vertical_scroll)
+        {
+            mshtml.IHTMLDocument2 doc = browser.Document as mshtml.IHTMLDocument2;
+            doc.parentWindow.scrollBy((int)Math.Floor(horizontal_scroll),(int) Math.Floor(vertical_scroll));
+            //doc.parentWindow.execScript("if(window != null && document.body != null) window.scrollTo( document.body.scrollLeft + "+ horizontal_scroll.ToString().Replace(",", ".") + ", document.body.scrollTop + "+ vertical_scroll.ToString().Replace(",", ".") + ") ;");
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+
+        [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
+        private static extern bool SetCursorPos(int X, int Y);
+
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+
+        async void BlockClicks()
+        {
+            can_click = false;
+            await Task.Delay(2000);
+            can_click = true;
         }
     }
 }

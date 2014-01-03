@@ -60,7 +60,7 @@
             vertical-align:central;
             height:500px;
             width:500px;
-            z-index:1;
+            z-index:2;
         }
         #link {
             visibility:hidden;
@@ -71,7 +71,7 @@
             font-size:20px;
             width:100px;
             height:100px;
-            z-index:2;
+            z-index:1;
         }
         #extender {
             position:absolute;
@@ -132,10 +132,17 @@
             }
 
         };
+
+        bodyColor = function () {
+            if (document.getElementById("body").style.background == "blue")
+                document.getElementById("body").style.background = "red";
+            else
+                document.getElementById("body").style.background = "blue";
+        };
     </script>
 </head>
 <body id="body">
-    <div id="arrow_right">
+    <div id="arrow_right" onclick="bodyColor()">
         <div id="right_body">
             Place your hands vertically to each other in the detection zone and scroll to the right
         </div>
