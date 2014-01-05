@@ -4,7 +4,7 @@
 library
 C#
 .cs
-C:\Users\TiMa\Documents\Visual Studio 2013\Projects\DT2140_KinectBrowser\KinectWpfViewers\obj\Debug\
+C:\Users\Lucas\Documents\Visual Studio 2012\Projects\DT2140_KinectBrowser\KinectWpfViewers\obj\Debug\
 Microsoft.Samples.Kinect.WpfViewers
 none
 false
@@ -12,8 +12,8 @@ DEBUG;TRACE
 
 61825566308
 2541610702
-221898381750
-17467280406
+221466648144
+15-528821850
 KinectAudioViewer.xaml;KinectDepthViewer.xaml;KinectColorViewer.xaml;KinectSettings.xaml;KinectSkeletonViewer.xaml;KinectVoiceCommandViewer.xaml;
 
 False

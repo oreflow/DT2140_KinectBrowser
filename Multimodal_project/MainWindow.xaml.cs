@@ -40,16 +40,15 @@ namespace Multimodal_project
         /// With focus on the setting up development environment and skeletal tracking videos
         /// </summary>
 
+        ///
 
-        SkeletonPoint click_start_pos;
-        bool can_click = true;
-        Dictionary<GestureState, int> max_iterations;
+
         public MainWindow()
         {
             SetCursorPos(0, 0);
             InitializeComponent();
             browser.Navigate("http://www.w3schools.com/");
-//            browser.Navigate(System.AppDomain.CurrentDomain.BaseDirectory + "web/start_page.html");
+            //            browser.Navigate(System.AppDomain.CurrentDomain.BaseDirectory + "web/start_page.html");
 
             max_iterations = new Dictionary<GestureState, int>();
             max_iterations[GestureState.ZOOM] = 8;
@@ -57,20 +56,17 @@ namespace Multimodal_project
             max_iterations[GestureState.CLICK] = 4;
 
             InitializeHandFigures();
-            /*
-                testing
-                int Width = 1920;
-                int Height = 1080;
-                RightEllipse.HorizontalOffset = ((0-320) / 640.0) * Width + Width / 2;
-                RightEllipse.VerticalOffset = ((0-240) / 480.0) * Height + Height / 2;
-
-                LeftEllipse.HorizontalOffset = ((320-320) / 640.0) * Width + Width / 2;
-                LeftEllipse.VerticalOffset = ((120-240) / 480.0) * Height + Height / 2;
-            */
         }
 
-        double zoom_current = 1.0;
-        enum PointerShape {RECTANGLE, ELLIPSE, STAR};
+        #region Hand visualization functionality.
+
+        /* Fields */
+        Rectangle LeftRect, RightRect;
+        Ellipse LeftEllipse, RightEllipse;
+        Polygon LeftStar, RightStar;
+        bool rightActive = false, leftActive = false;
+
+        /* Methods */
         private void InitializeHandFigures()
         {
             LeftRect = new Rectangle();
@@ -116,7 +112,7 @@ namespace Multimodal_project
                 double r = (i & 1) == 0 ? rOuter : rInner;
                 points.Add(new Point(25 + Math.Cos(i * angle) * r, 25 + Math.Sin(i * angle) * r));
             }
-             points.Add(new Point(25 + Math.Cos(0) * rOuter, 25 + Math.Sin(0) * rOuter));
+            points.Add(new Point(25 + Math.Cos(0) * rOuter, 25 + Math.Sin(0) * rOuter));
 
             LeftStar = new Polygon();
             LeftStar.Fill = System.Windows.Media.Brushes.Green;
@@ -152,47 +148,49 @@ namespace Multimodal_project
             RightRect.Stroke = new_color;
             RightStar.Stroke = new_color;
         }
-        void setLeftShape(PointerShape  shape)
+        void setLeftShape(PointerShape shape)
         {
-            switch(shape)
+            switch (shape)
             {
-                case PointerShape.ELLIPSE :
+                case PointerShape.ELLIPSE:
                     LeftPopup.Child = LeftEllipse;
                     break;
-                case PointerShape.RECTANGLE :
+                case PointerShape.RECTANGLE:
                     LeftPopup.Child = LeftRect;
                     break;
-                case PointerShape.STAR :
+                case PointerShape.STAR:
                     LeftPopup.Child = LeftStar;
                     break;
             }
         }
-        void setRightShape(PointerShape  shape)
+        void setRightShape(PointerShape shape)
         {
-            switch(shape)
+            switch (shape)
             {
-                case PointerShape.ELLIPSE :
+                case PointerShape.ELLIPSE:
                     RightPopup.Child = RightEllipse;
                     break;
-                case PointerShape.RECTANGLE :
+                case PointerShape.RECTANGLE:
                     RightPopup.Child = RightRect;
                     break;
-                case PointerShape.STAR :
+                case PointerShape.STAR:
                     RightPopup.Child = RightStar;
                     break;
             }
         }
 
-        KinectSensor _sensor;
+        /* Enums */
+        enum PointerShape { RECTANGLE, ELLIPSE, STAR };
+        #endregion
+
+        #region Kinect stuff.
+        /* Fields */
         bool closing = false;
+        KinectSensor _sensor;
         const int skeletonCount = 6;
         Skeleton[] allSkeletons = new Skeleton[skeletonCount];
 
-        Rectangle LeftRect, RightRect;
-        Ellipse LeftEllipse, RightEllipse;
-        Polygon LeftStar, RightStar;
-        bool rightActive = false, leftActive = false;
-
+        /* Methods */
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var parameters = new TransformSmoothParameters
@@ -225,6 +223,7 @@ namespace Multimodal_project
             }
 
         }
+
         private void StopKinect(KinectSensor sensor)
         {
             if (sensor != null && sensor.IsRunning)
@@ -243,7 +242,7 @@ namespace Multimodal_project
             if (first == null)
                 return;
 
-            SetHandPositions(first, e);
+            UpdateHandPositions(first, e);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -251,7 +250,6 @@ namespace Multimodal_project
             closing = true;
             StopKinect(_sensor);
         }
-
 
         Skeleton getFirstSkeleton(AllFramesReadyEventArgs e)
         {
@@ -266,7 +264,8 @@ namespace Multimodal_project
                 return first;
             }
         }
-        private void SetHandPositions(Skeleton skeleton, AllFramesReadyEventArgs e)
+
+        private void UpdateHandPositions(Skeleton skeleton, AllFramesReadyEventArgs e)
         {
             using (DepthImageFrame depth = e.OpenDepthImageFrame())
             {
@@ -298,25 +297,25 @@ namespace Multimodal_project
                 double threshold = 0.25;
                 if (skeleton.Joints[JointType.Head].Position.Z > skeleton.Joints[JointType.HandLeft].Position.Z + threshold)
                 {
-                    if(!leftActive)
+                    if (!leftActive)
                         setLeftColor(System.Windows.Media.Brushes.HotPink);
                     leftActive = true;
                 }
                 else
                 {
-                    if(leftActive)
+                    if (leftActive)
                         setLeftColor(System.Windows.Media.Brushes.White);
                     leftActive = false;
                 }
                 if (skeleton.Joints[JointType.Head].Position.Z > skeleton.Joints[JointType.HandRight].Position.Z + threshold)
                 {
-                    if(!rightActive)
+                    if (!rightActive)
                         setRightColor(System.Windows.Media.Brushes.HotPink);
                     rightActive = true;
                 }
                 else
                 {
-                    if(rightActive)
+                    if (rightActive)
                         setRightColor(System.Windows.Media.Brushes.White);
                     rightActive = false;
                 }
@@ -327,12 +326,17 @@ namespace Multimodal_project
 
             }
         }
+        #endregion
 
+        #region Gesture analysis functionality.
+        /* Fields */
+        Dictionary<GestureState, int> max_iterations;
         LinkedList<Joint> prev_left = new LinkedList<Joint>();
         LinkedList<Joint> prev_right = new LinkedList<Joint>();
-        enum GestureState { ZOOM, SCROLL, CLICK, UNKNOWN };
         GestureState current_state;
+        enum GestureState { ZOOM, SCROLL, CLICK, UNKNOWN };
 
+        /* Methods */
         private void gestureStep(Joint left_hand_scaled, Joint right_hand_scaled, Skeleton skeleton)
         {
             prev_left.AddFirst(left_hand_scaled);
@@ -365,9 +369,9 @@ namespace Multimodal_project
                 if (!can_click)
                     return;
 
-                if(current_state == GestureState.CLICK)
+                if (current_state == GestureState.CLICK)
                 {
-                    if ((right_hand_scaled.Position.Z ) < click_start_pos.Z - 0.1)
+                    if ((right_hand_scaled.Position.Z) < click_start_pos.Z - 0.1)
                     {
                         int X = int.Parse(Math.Floor(click_start_pos.X).ToString()) + 25;
                         int Y = int.Parse(Math.Floor(click_start_pos.Y).ToString()) + 25;
@@ -380,7 +384,7 @@ namespace Multimodal_project
                         setRightColor(System.Windows.Media.Brushes.HotPink);
                         Console.WriteLine("Triggered click.");
                     }
-                    else if((right_hand_scaled.Position.Z ) > click_start_pos.Z + 0.1)
+                    else if ((right_hand_scaled.Position.Z) > click_start_pos.Z + 0.1)
                     {
                         SetState(GestureState.UNKNOWN);
                         Console.WriteLine("Cancelled click");
@@ -406,7 +410,7 @@ namespace Multimodal_project
                     }
                     tmp = j;
                 }
-                if(dz > 0.05 &&
+                if (dz > 0.05 &&
                     Math.Abs(dx) < 100 &&
                     Math.Abs(dy) < 100)
                 {
@@ -452,7 +456,7 @@ namespace Multimodal_project
                 double right_dist = Math.Sqrt(Math.Pow(right_dy, 2) + Math.Pow(right_dx, 2));
                 double dist = Math.Sqrt(Math.Pow(left_dy - right_dy, 2) + Math.Pow(left_dx - right_dx, 2));
 
-                
+
 
                 if (current_state == GestureState.UNKNOWN)
                 {
@@ -482,7 +486,7 @@ namespace Multimodal_project
                     }
                 }
 
-                if(current_state == GestureState.ZOOM)
+                if (current_state == GestureState.ZOOM)
                 {
                     if (prev_left.Count > 1 && prev_right.Count > 1)
                     {
@@ -493,7 +497,7 @@ namespace Multimodal_project
                         // call zoom function
                     }
                 }
-                else if(current_state == GestureState.SCROLL)
+                else if (current_state == GestureState.SCROLL)
                 {
                     if (prev_left.Count > 1 && prev_right.Count > 1)
                     {
@@ -517,19 +521,19 @@ namespace Multimodal_project
                 return;
             Console.WriteLine("Changing state from: " + current_state + " to: " + new_state);
             current_state = new_state;
-            switch(new_state)
+            switch (new_state)
             {
-                case GestureState.ZOOM :
+                case GestureState.ZOOM:
                     setLeftShape(PointerShape.STAR);
                     setRightShape(PointerShape.STAR);
                     break;
-                case GestureState.SCROLL :
+                case GestureState.SCROLL:
                     setLeftShape(PointerShape.RECTANGLE);
                     setRightShape(PointerShape.RECTANGLE);
                     break;
-                case GestureState.CLICK :
+                case GestureState.CLICK:
                     break;
-                case GestureState.UNKNOWN :
+                case GestureState.UNKNOWN:
                     setLeftShape(PointerShape.ELLIPSE);
                     setRightShape(PointerShape.ELLIPSE);
                     break;
@@ -538,9 +542,15 @@ namespace Multimodal_project
 
 
         }
+        #endregion
 
+        #region Browser manipulation.
+        /// <summary>
+        /// Browser zoom management.
+        /// </summary>
         const double MAX_ZOOM = 5.0;
         const double MIN_ZOOM = 0.1;
+        double zoom_current = 1.0;
         void SetZoomRel(double zoom_change)
         {
 
@@ -550,30 +560,46 @@ namespace Multimodal_project
             doc.parentWindow.execScript("if(document.body != null) document.body.style.zoom = " + zoom_current.ToString().Replace(",", ".") + ";");
         }
 
+        /// <summary>
+        /// Browser 
+        /// </summary>
+        /// <param name="horizontal_scroll"></param>
+        /// <param name="vertical_scroll"></param>
         void SetScrollRel(double horizontal_scroll, double vertical_scroll)
         {
             mshtml.IHTMLDocument2 doc = browser.Document as mshtml.IHTMLDocument2;
-            doc.parentWindow.scrollBy((int)Math.Floor(horizontal_scroll),(int) Math.Floor(vertical_scroll));
+            doc.parentWindow.scrollBy((int)Math.Floor(horizontal_scroll), (int)Math.Floor(vertical_scroll));
             //doc.parentWindow.execScript("if(window != null && document.body != null) window.scrollTo( document.body.scrollLeft + "+ horizontal_scroll.ToString().Replace(",", ".") + ", document.body.scrollTop + "+ vertical_scroll.ToString().Replace(",", ".") + ") ;");
         }
 
+        #endregion
+
+        #region Cursor management.
+        /* Fields */
+        bool can_click = true;
+        SkeletonPoint click_start_pos;
+
+        /* Methods */
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
         [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
         private static extern bool SetCursorPos(int X, int Y);
-
-
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
         async void BlockClicks()
         {
             can_click = false;
-            await Task.Delay(2000);
+            await Task.Delay(CLICK_COOLDOWN_MS);
             can_click = true;
         }
+
+        /* Constants */
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        private const int CLICK_COOLDOWN_MS = 2000;
+
+        
+        #endregion
     }
 }
